@@ -100,7 +100,6 @@ class Application extends \yii\base\Application
         try {
             Yii::debug("Route requested: '$route'", __METHOD__);
             $this->requestedRoute = $route;
-            return 88;
             $result = $this->runAction($route, $params);
             if ($result instanceof Response) {
                 return $result;
@@ -113,7 +112,6 @@ class Application extends \yii\base\Application
 
             return $response;
         } catch (InvalidRouteException $e) {
-            return 88;
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'), $e->getCode(), $e);
         }
     }
