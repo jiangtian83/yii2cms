@@ -123,7 +123,7 @@ class Controller extends Component implements ViewContextInterface
      */
     public function runAction($id, $params = [])
     {
-        return $action = $this->createAction($id);
+        $action = $this->createAction($id);
         if ($action === null) {
             throw new InvalidRouteException('Unable to resolve the request: ' . $this->getUniqueId() . '/' . $id);
         }
