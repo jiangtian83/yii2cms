@@ -230,7 +230,6 @@ class Controller extends Component implements ViewContextInterface
             if (method_exists($this, $methodName)) {
                 $method = new \ReflectionMethod($this, $methodName);
                 if ($method->isPublic() && $method->getName() === $methodName) {
-                    die;
                     return new InlineAction($id, $this, $methodName);
                 }
             }
