@@ -11,4 +11,4 @@ $config = yii\helpers\ArrayHelper::merge(
     require(__DIR__ . '/../../common/config/main.php'),
     require(__DIR__ . '/../config/main.php')
 );
-var_export((new yii\web\Application($config))->run());
+(new yii\web\Application($config))->run();
