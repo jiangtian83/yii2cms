@@ -100,7 +100,7 @@ class Application extends \yii\base\Application
         try {
             Yii::debug("Route requested: '$route'", __METHOD__);
             $this->requestedRoute = $route;
-            $result = $this->runAction($route, $params);
+            return $result = $this->runAction($route, $params);
             if ($result instanceof Response) {
                 return $result;
             }

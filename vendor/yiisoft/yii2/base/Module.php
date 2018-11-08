@@ -525,11 +525,11 @@ class Module extends ServiceLocator
             list($controller, $actionID) = $parts;
             $oldController = Yii::$app->controller;
             Yii::$app->controller = $controller;
-            $result = $controller->runAction($actionID, $params);
+            return $result = $controller->runAction($actionID, $params);
             if ($oldController !== null) {
                 Yii::$app->controller = $oldController;
             }
-die;
+
             return $result;
         }
 
