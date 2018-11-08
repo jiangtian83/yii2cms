@@ -116,7 +116,7 @@ class BaseObject implements Configurable
      */
     public function init()
     {
-        die;
+
     }
 
     /**
