@@ -123,7 +123,6 @@ class Controller extends Component implements ViewContextInterface
      */
     public function runAction($id, $params = [])
     {
-        die;
         $action = $this->createAction($id);
         if ($action === null) {
             throw new InvalidRouteException('Unable to resolve the request: ' . $this->getUniqueId() . '/' . $id);
@@ -224,6 +223,7 @@ class Controller extends Component implements ViewContextInterface
         }
 
         $actionMap = $this->actions();
+        die;
         if (isset($actionMap[$id])) {
             return Yii::createObject($actionMap[$id], [$id, $this]);
         } elseif (preg_match('/^[a-z0-9\\-_]+$/', $id) && strpos($id, '--') === false && trim($id, '-') === $id) {
