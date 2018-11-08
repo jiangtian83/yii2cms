@@ -389,6 +389,7 @@ abstract class Application extends Module
             $this->trigger(self::EVENT_AFTER_REQUEST);
 
             $this->state = self::STATE_SENDING_RESPONSE;
+            return $this->state;
             $response->send();
 
             $this->state = self::STATE_END;
