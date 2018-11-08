@@ -106,7 +106,6 @@ class BaseObject implements Configurable
         if (!empty($config)) {
             Yii::configure($this, $config);
         }
-        die;
         $this->init();
     }
 
@@ -117,6 +116,7 @@ class BaseObject implements Configurable
      */
     public function init()
     {
+        die;
     }
 
     /**
