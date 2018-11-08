@@ -520,7 +520,6 @@ class Module extends ServiceLocator
     public function runAction($route, $params = [])
     {
         $parts = $this->createController($route);
-        return $parts;
         if (is_array($parts)) {
             /* @var $controller Controller */
             list($controller, $actionID) = $parts;
