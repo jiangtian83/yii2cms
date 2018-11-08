@@ -121,7 +121,7 @@ class Controller extends Component implements ViewContextInterface
      * @throws InvalidRouteException if the requested action ID cannot be resolved into an action successfully.
      * @see createAction()
      */
-    public function runAction($id, $params = [])
+    public function  runAction($id, $params = [])
     {
         $action = $this->createAction($id);
         if ($action === null) {
