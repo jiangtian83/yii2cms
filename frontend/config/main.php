@@ -52,6 +52,7 @@ return [
             'errorAction' => 'site/error',
         ],
         'urlManager' => [
+            'class' => \yii\web\UrlRule::className(),
             'enablePrettyUrl' => true,
             'showScriptName' => false,
 			'suffix'=>'.html',
