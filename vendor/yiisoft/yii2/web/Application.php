@@ -80,7 +80,6 @@ class Application extends \yii\base\Application
         if (empty($this->catchAll)) {
             try {
                 list($route, $params) = $request->resolve();
-                return $request->resolve();
             } catch (UrlNormalizerRedirectException $e) {
                 $url = $e->url;
                 if (is_array($url)) {
@@ -102,6 +101,7 @@ class Application extends \yii\base\Application
             Yii::debug("Route requested: '$route'", __METHOD__);
             $this->requestedRoute = $route;
             $result = $this->runAction($route, $params);
+            return $result;
             if ($result instanceof Response) {
                 return $result;
             }
