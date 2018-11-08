@@ -59,7 +59,6 @@ class Action extends Component
     {
         $this->id = $id;
         $this->controller = $controller;
-        die;
         parent::__construct($config);
     }
 
