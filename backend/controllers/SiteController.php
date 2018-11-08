@@ -93,4 +93,8 @@ class SiteController extends Controller
 		}
         return $this->render('index',["data"=>['x'=>$x,'y'=>$y,'x1'=>$x1,'y1'=>$y1]]);
     }
+
+    public function actionError(){
+        return $this->render('error');
+    }
 }
