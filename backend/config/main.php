@@ -61,9 +61,9 @@ return [
         ],
         "urlManager" => [       
             "enablePrettyUrl" => true,        
-            #"enableStrictParsing" => false,     
+            //"enableStrictParsing" => false,     
             "showScriptName" => false,       
-            "suffix" => "",    
+            //"suffix" => "",    
             "rules" => [        
 //                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
 //                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
