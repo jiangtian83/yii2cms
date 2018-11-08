@@ -529,7 +529,7 @@ class Module extends ServiceLocator
             if ($oldController !== null) {
                 Yii::$app->controller = $oldController;
             }
-
+die;
             return $result;
         }
 
