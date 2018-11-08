@@ -52,6 +52,7 @@ return [
             ],
         ],
         'errorHandler' => [
+            'class' => \yii\web\ErrorHandler::className(),
             'errorAction' => 'site/error',
         ],
         "authManager" => [        
