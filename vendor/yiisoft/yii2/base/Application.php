@@ -385,7 +385,6 @@ abstract class Application extends Module
             $this->state = self::STATE_HANDLING_REQUEST;
 
             $response = $this->handleRequest($this->getRequest());
-            return $response;
 
             $this->state = self::STATE_AFTER_REQUEST;
             $this->trigger(self::EVENT_AFTER_REQUEST);
