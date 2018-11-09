@@ -59,17 +59,17 @@ return [
             "class" => 'yii\rbac\DbManager',   
             "defaultRoles" => ["guest"],    
         ],
-        "urlManager" => [
-            "class" => \yii\web\UrlManager::className(),
-            "enablePrettyUrl" => true,
-            "enableStrictParsing" => false,
-            "showScriptName" => false,       
-            "suffix" => "",
-            "rules" => [        
-                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
-                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
-            ],
-        ],
+//        "urlManager" => [
+//            "class" => \yii\web\UrlManager::className(),
+//            "enablePrettyUrl" => true,
+//            "enableStrictParsing" => false,
+//            "showScriptName" => false,
+//            "suffix" => "",
+//            "rules" => [
+//                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
+//                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
+//            ],
+//        ],
     ],
     'as access' => [
         'class' => 'rbac\components\AccessControl',
