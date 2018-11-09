@@ -32,6 +32,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'cookieValidationKey' => '840f4e08a35a4b0d3fb62240111e1105'
         ],
         'user' => [
             'identityClass' => 'rbac\models\User',
