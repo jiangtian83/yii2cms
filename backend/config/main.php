@@ -26,8 +26,8 @@ return [
     ],
     "aliases" => [    
         '@rbac' => '@backend/modules/rbac',
-		'@system' => '@backend/modules/system',
-		'@backup' => '@backend/modules/backup',
+	'@system' => '@backend/modules/system',
+	'@backup' => '@backend/modules/backup',
     ],
     'components' => [
         'request' => [
