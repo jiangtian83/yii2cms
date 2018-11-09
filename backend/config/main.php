@@ -32,6 +32,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'cookieValidationKey' => '840f4e08a35a4b0d3fb62240111e1105'
         ],
         'user' => [
             'identityClass' => 'rbac\models\User',
@@ -59,17 +60,17 @@ return [
             "class" => 'yii\rbac\DbManager',   
             "defaultRoles" => ["guest"],    
         ],
-//        "urlManager" => [
-//            "class" => \yii\web\UrlManager::className(),
-//            "enablePrettyUrl" => true,
-//            "enableStrictParsing" => false,
-//            "showScriptName" => false,
-//            "suffix" => "",
-//            "rules" => [
-//                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
-//                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
-//            ],
-//        ],
+        "urlManager" => [
+            "class" => \yii\web\UrlManager::className(),
+            "enablePrettyUrl" => true,
+            "enableStrictParsing" => false,
+            "showScriptName" => false,
+            "suffix" => "",
+            "rules" => [
+                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
+                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
+            ],
+        ],
     ],
     'as access' => [
         'class' => 'rbac\components\AccessControl',
