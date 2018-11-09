@@ -22,13 +22,14 @@ return [
                     'baseUrl' => '@web',
                     'js' => [
                         'js/jquery-1.10.2.min.js',
-						'js/jquery.jplayer.min.js',
+			'js/jquery.jplayer.min.js',
                     ]
                 ],
             ],
         ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'cookieValidationKey' => 'true'
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -52,12 +53,11 @@ return [
             'errorAction' => 'site/error',
         ],
         'urlManager' => [
-            'class' => \yii\web\UrlRule::className(),
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-			'suffix'=>'.html',
+	    'suffix'=>'',
             'rules' => [
-				"<controller:\w+>/<id:\d+>"=>"<controller>/view",
+		"<controller:\w+>/<id:\d+>"=>"<controller>/view",
             ],
         ],
     ],
