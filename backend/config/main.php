@@ -59,14 +59,15 @@ return [
             "class" => 'yii\rbac\DbManager',   
             "defaultRoles" => ["guest"],    
         ],
-        "urlManager" => [       
-            "enablePrettyUrl" => true,        
-            //"enableStrictParsing" => false,     
+        "urlManager" => [
+            "class" => \yii\web\UrlManager::className(),
+            "enablePrettyUrl" => true,
+            "enableStrictParsing" => false,
             "showScriptName" => false,       
-            //"suffix" => "",    
+            "suffix" => "",
             "rules" => [        
-//                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
-//                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
+                "<controller:\w+>/<id:\d+>"=>"<controller>/view",
+                "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
             ],
         ],
     ],
