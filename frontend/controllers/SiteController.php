@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use yii;
 use yii\web\Controller;
 
 /**
@@ -17,5 +18,9 @@ class SiteController extends Controller
     public function actionIndex()
     {
         echo 'hello world!';
+    }
+
+    public function actionTest(){
+	echo Yii::getVersion();
     }
 }
