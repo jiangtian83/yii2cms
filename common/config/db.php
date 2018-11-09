@@ -15,6 +15,7 @@ if (YII_ENV == 'dev') {
         'username' => 'root',
         'password' => 'U8)(*&ab3',
         'charset' => 'utf8',
+        'tablePrefix' => 't_'
     ];
 } else {
     return [
