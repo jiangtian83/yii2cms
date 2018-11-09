@@ -18,8 +18,6 @@ return [
 			]
 		],  
 	],
-        'db' => [
-
-         ]
+        'db' => require(__DIR__ . '/db.php')
     ],
 ];
