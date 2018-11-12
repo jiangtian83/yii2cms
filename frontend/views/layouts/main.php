@@ -1,20 +1,20 @@
 <?php
-use frontend\assets\MumuAsset;
+use frontend\assets\JTAsset;
 use yii\helpers\Html;
 use common\models\Config;
 use yii\helpers\Url;
-MumuAsset::register($this);
+JTAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?= Html::encode($this->title) ?>-木木博客-有暖风在心中，何必畏惧过寒冬。</title>
+        <title><?= Html::encode($this->title) ?>-<?= Yii::$app->params['author']['ad']?></title>
         <meta charset="UTF-8" />
-        <meta name="keywords" content="木木博客,PHP资源网,<?= Html::encode($this->title) ?>,网页注入,网站XSS,社工库 Oday,安全信息,安全防护" />
-        <meta name="description" content="木木博客,<?= Html::encode($this->title) ?>" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
-		<link rel="shortcut icon" type="images/x-icon" href="/images/favicon.ico" />
+		<link rel="shortcut icon" type="images/x-icon" href="favicon.ico" />
 		<?= Html::csrfMetaTags() ?>
 		<?php $this->head() ?>
     </head>
@@ -25,7 +25,7 @@ MumuAsset::register($this);
                 <div id="header-wrap">
                     <div id="logo">
                         <div class="logo-img">
-                            <img class="avatar" src="/images/header.jpg" title="Li" /></div>
+                            <img class="avatar" src="header.jpg" title="Li" /></div>
                         <div id="logo-music">
                             <div id="logo-music-name"></div>
                             <div id="logo-music-prev"></div>
@@ -53,7 +53,7 @@ MumuAsset::register($this);
                         <span></span>
                         <span></span>menu
 					</button>
-					<?= frontend\widgets\MenuWidget::widget(['is_mobile'=>false])?>
+					<?php //echo frontend\widgets\MenuWidget::widget(['is_mobile'=>false]) ?>
                     <form role="search" method="get" id="search-form" action="<?= Url::to(['site/index'])?>">
                         <div>
                             <input value="Search" name="s" id="s" onblur="if ( this.value == '' ){this.value='Search';}" onfocus="if ( this.value == 'Search' ){this.value = '';}" type="text" /></div>
@@ -70,7 +70,7 @@ MumuAsset::register($this);
             <!--footer begin-->
             <footer id="main-footer">
 				<div id="full-footer-widget">
-					<?= frontend\widgets\LinkWidget::widget()?>
+					<?php //echo frontend\widgets\LinkWidget::widget()?>
 				</div>
                 <div id="footer-copy">
 					<div id="online_box">
@@ -85,7 +85,7 @@ MumuAsset::register($this);
             </footer>
             <!--footer--></div>
         <div class="hide" id="scrolltop"></div>
-        <?= frontend\widgets\MenuWidget::widget(['is_mobile'=>true])?>
+        <?php //echo frontend\widgets\MenuWidget::widget(['is_mobile'=>true])?>
         <div id="loading-wrap">
             <div class="loading">
                 <div class="loading-bar">

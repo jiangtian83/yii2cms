@@ -12,19 +12,7 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'assetManager' => [
-            'bundles' => [
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,
-                    'basePath' => '@webroot',
-                    'baseUrl' => '@web',
-                    'js' => [
-                        'js/jquery-1.10.2.min.js',
-			'js/jquery.jplayer.min.js',
-                    ]
-                ],
-            ],
-        ],
+        'assetManager' => [],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'cookieValidationKey' => 'true'
@@ -53,9 +41,9 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-	    'suffix'=>'',
+	        'suffix'=>'',
             'rules' => [
-		"<controller:\w+>/<id:\d+>"=>"<controller>/view",
+		        "<controller:\w+>/<id:\d+>"=>"<controller>/view",
             ],
         ],
     ],
