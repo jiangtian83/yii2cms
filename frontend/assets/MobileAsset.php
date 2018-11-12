@@ -14,10 +14,10 @@ class MobileAsset extends AssetBundle
 
     public $css = [
         "plugins/layui/css/layui.css",
-        "plugins/layui/css/font/iconfont.eot",
-        "plugins/layui/css/font/iconfont.svg",
-        "plugins/layui/css/font/iconfont.ttf",
-        "plugins/layui/css/font/iconfont.woff"
+        "plugins/layui/font/iconfont.eot",
+        "plugins/layui/font/iconfont.svg",
+        "plugins/layui/font/iconfont.ttf",
+        "plugins/layui/font/iconfont.woff"
     ];
 
     public $js = [

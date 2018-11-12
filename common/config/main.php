@@ -15,8 +15,8 @@ return [
                     ]
                 ],
             ],
-            'assetMap' => [
-                'jquery-1.10.2.min.js' => false,
+            'converter' => [
+                'class' => 'yii\web\AssetConverter'
             ]
         ],
 		//文件缓存组件

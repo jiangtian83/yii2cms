@@ -12,7 +12,6 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'assetManager' => [],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'cookieValidationKey' => 'true'
