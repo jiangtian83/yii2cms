@@ -8,10 +8,7 @@
  * QQ: 284053253
  */
 
-use frontend\assets\MobileAsset;
 use yii\helpers\Html;
-
-MobileAsset::register($this);
 
 ?>
 <?php $this->beginPage() ?>
@@ -33,21 +30,26 @@ MobileAsset::register($this);
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <div  class="layui-container">
-        <blockquote class="layui-elem-quote">注意：下述演示中的颜色只是做一个区分作用，并非栅格内置。</blockquote>
-        <div class="layui-row">
-            <div class="layui-col-xs6">
-                <div class="grid-demo grid-demo-bg1">6/12</div>
-            </div>
-            <div class="layui-col-xs6">
-                <div class="grid-demo">6/12</div>
-            </div>
+    <header class="jt-col-md-12 jt-background-grad jt-height-80 jt-lineheight-100 jt-position-relative jt-margin-padding-0">
+        <div class="jt-position-absolute jt-col-md-12 jt-margin-padding-0 jt-text-align-center jt-color-white jt-font-size-24 jt-lineheight-80">
+            <?= $this->context->title ?>
         </div>
-    </div>
-    <header>
-
+        <ul class="jt-clear jt-height-percent-100">
+            <li class="jt-float-left jt-col-md-6 jt-margin-padding-0">
+                <div class="jt-wrapper jt-text-align-left jt-lineheight-90">
+                    <i class="fa fa-chevron-left jt-color-white jt-font-size-24 jt-margin-left-10 <?= $this->context->showBackIcon ? 'jt-display-inline' : 'jt-display-none' ?>"></i>
+                </div>
+            </li>
+            <li class="jt-float-right jt-col-md-6 jt-margin-padding-0">
+                <div class="jt-wrapper jt-text-align-right jt-lineheight-90">
+                    <i class="fa fa-<?= $this->context->showSetting ? 'cog' : 'bars' ?> jt-color-white jt-font-size-36 jt-margin-right-10 <?= $this->context->showFoldIcon ? 'jt-display-inline' : 'jt-display-none' ?>"></i>
+                </div>
+            </li>
+        </ul>
     </header>
 
+    <?= $content ?>
+    <footer class="jt-height-60 jt-col-md-12 <?= $this->context->showFooter ? 'jt-display-block' : 'jt-display-none'?>"></footer>
 
     <?php $this->beginBlock('test') ?>
         $(function($) {

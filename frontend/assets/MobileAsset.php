@@ -14,14 +14,16 @@ class MobileAsset extends AssetBundle
 
     public $css = [
         "plugins/layui/css/layui.css",
-        "plugins/layui/font/iconfont.eot",
-        "plugins/layui/font/iconfont.svg",
-        "plugins/layui/font/iconfont.ttf",
-        "plugins/layui/font/iconfont.woff"
+        "plugins/awesome/css/font-awesome.css",
+        "common/css/common.css",
+        "common/css/justify.css",
+        "common/css/init.css"
     ];
 
     public $js = [
-        "plugins/layui/layui.js"
+        "plugins/layui/layui.js",
+        "plugins/layui/lay/modules/form.js",
+        "common/js/common.js"
     ];
 
     public $depends = [
@@ -41,7 +43,10 @@ class MobileAsset extends AssetBundle
             'plugins/layui/lay/modules/*',
             'plugins/layui/images/*',
             'plugins/awesome/css/*',
-            'plugins/awesome/fonts/*'
+            'plugins/awesome/fonts/*',
+            'common/images/*',
+            'common/css/*',
+            'common/js/*'
         ],
         'caseSensitive' => true,
         'forceCopy' => true
