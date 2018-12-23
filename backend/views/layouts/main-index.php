@@ -20,7 +20,7 @@ use yii\helpers\Html;
 	<title><?= Html::encode($this->title) ?></title>
 	<?php $this->head() ?>
 </head>
-<body class="<?php if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){echo "mainBody";}else{echo "childrenBody";}?>">
+<body class="<?php if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){echo "mainBody";}else{echo "childrenBody";}?>" style="padding: 0 20px;">
 <?php $this->beginBody() ?>
 <?= $content ?>
 <!-- 移动导航 -->
