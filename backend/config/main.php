@@ -87,6 +87,15 @@ return [
             'gii'
         ]
     ],
+    'as timestamp' => [
+        'class' => \yii\behaviors\TimestampBehavior::class,
+        'value' => new \yii\db\Expression('NOW()')
+    ],
+    'as content' => [
+        'class' => \yii\behaviors\BlameableBehavior::class,
+        'createdByAttribute' => 'creator',
+        'updatedByAttribute' => false
+    ],
     'on beforeAction' => function(){
 
     },

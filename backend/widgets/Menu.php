@@ -74,17 +74,26 @@ class Menu extends \yii\widgets\Menu
             $labelTemplate = $this->labelTemplate;
             $linkTemplate = $this->linkTemplate;
         }
+        if(isset($item['url'][0])) {
+            if (isset($item['items'])) {
+                $url = 'javascript:;' . '" data-url="'.Url::to($item["url"]).'"';
+            } else {
+                $url = Url::to($item["url"]);
+            }
+        } else {
+            $url = 'javascript:void(0);';
+        }
 		if(substr($item['icon'],0,2)=='&#'){
 			$replacements = [
 				'{label}' => strtr($this->labelTemplate, ['{label}' => $item['label'],]),
 				'{icon}' => empty($item['icon']) ? $this->defaultIconHtml: '<i class="iconfont" data-icon="'.self::$iconClassPrefix . $item['icon'].'">'.self::$iconClassPrefix . $item['icon'].'</i> ',
-				'{url}' => isset($item['url'][0]) ? 'javascript:;' . '" data-url="'.Url::to($item["url"]).'"' : 'javascript:void(0);',
+				'{url}' => $url,
 			];
 		}else{
 			$replacements = [
 				'{label}' => strtr($this->labelTemplate, ['{label}' => $item['label'],]),
 				'{icon}' => empty($item['icon']) ? $this->defaultIconHtmlIcon: '<i class="'.$item['icon'].' "></i> ',
-				'{url}' => isset($item['url'][0]) ? 'javascript:;' . '" data-url="'.Url::to($item["url"]).'"' : 'javascript:void(0);',
+				'{url}' => $url,
 			];
 		}
         
