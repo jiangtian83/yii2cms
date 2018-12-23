@@ -42,21 +42,18 @@ class Menu extends \yii\widgets\Menu
         if ($this->route === null && Yii::$app->controller !== null) {
             $this->route = Yii::$app->controller->getRoute();
         }
+
         if ($this->params === null) {
             $this->params = Yii::$app->request->getQueryParams();
         }
+
         $posDefaultAction = strpos($this->route, Yii::$app->controller->defaultAction);
         if ($posDefaultAction) {
             $this->noDefaultAction = rtrim(substr($this->route, 0, $posDefaultAction), '/');
         } else {
             $this->noDefaultAction = false;
         }
-        $posDefaultRoute = strpos($this->route, Yii::$app->controller->module->defaultRoute);
-        if ($posDefaultRoute) {
-            $this->noDefaultRoute = rtrim(substr($this->route, 0, $posDefaultRoute), '/');
-        } else {
-            $this->noDefaultRoute = false;
-        }
+
         $items = $this->normalizeItems($this->items, $hasActiveChild);
         if (!empty($items)) {
             $options = $this->options;
@@ -131,12 +128,15 @@ class Menu extends \yii\widgets\Menu
                     '{show}' => $item['active'] ? "style='display: block'" : '',
                     '{items}' => $this->renderItems($item['items']),
                 ]);
-				if (isset($options['class'])) {
-					$options['class'] .= 'layui-nav-item';
-				} else {
-					$options['class'] = 'layui-nav-item';
-				}
             }
+
+            // 没有子级菜单也要加class
+            if (isset($options['class'])) {
+                $options['class'] .= 'layui-nav-item';
+            } else {
+                $options['class'] = 'layui-nav-item';
+            }
+
             $lines[] = Html::tag($tag, $menu, $options);
         }
         return implode("\n", $lines);
@@ -147,6 +147,7 @@ class Menu extends \yii\widgets\Menu
      */
     protected function normalizeItems($items, &$active)
     {
+        // 标准化菜单items，该$items来源于widget-createObject
         foreach ($items as $i => $item) {
             if (!isset($item['label'])) {
                 $item['label'] = '';

@@ -59,16 +59,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-		$sql1='SELECT
-					ip,
-					FROM_UNIXTIME(created_at, "%Y-%m-%d"),
-					COUNT(*) as num
-				FROM
-					t_admin_log
-				WHERE
-					FROM_UNIXTIME(created_at, "%Y-%m-%d") = date_format(NOW(), "%Y-%m-%d")
-				GROUP BY
-					ip';
+		$sql1='SELECT ip,ANY_VALUE(FROM_UNIXTIME(created_at, "%Y-%m-%d")) as u,COUNT(*) as num FROM t_admin_log WHERE FROM_UNIXTIME(created_at, "%Y-%m-%d") = date_format(NOW(), "%Y-%m-%d") GROUP BY ip';
 		$rows1=Yii::$app->db->createCommand($sql1)->query();
 		$x1 = [];
 		$y1 = [];
@@ -77,13 +68,7 @@ class SiteController extends Controller
 			$y1[]=$value['num'];
 		}
 		
-		$sql = 'SELECT
-					FROM_UNIXTIME(created_at, "%Y-%m-%d") as date,
-					COUNT(*) as num
-				FROM
-					t_admin_log
-				GROUP BY
-					FROM_UNIXTIME(created_at, "%Y-%m-%d")';
+		$sql = 'SELECT FROM_UNIXTIME(created_at, "%Y-%m-%d") as date,COUNT(*) as num FROM t_admin_log GROUP BY date';
 		$rows=Yii::$app->db->createCommand($sql)->query();
 		$x = [];
 		$y = [];

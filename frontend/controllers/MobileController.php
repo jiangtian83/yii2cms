@@ -11,6 +11,7 @@
 namespace frontend\controllers;
 
 
+use common\Guid;
 use yii\web\Controller;
 
 class MobileController extends Controller

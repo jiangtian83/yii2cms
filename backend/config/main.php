@@ -8,11 +8,17 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
-	'name' => 'alili后台管理系统',
+	'name' => '展会直播后台',
     'basePath' => dirname(__DIR__),
     'language' => 'zh-CN',
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
+//    'defaultRoute' => 'system/config/index',
+//    'catchAll' => [
+//        '/j-t/miao',
+//        'name' => 'Junheng',
+//        'sex' => 'boy'
+//    ],
     'modules' => [
         "rbac" => [        
             'class' => 'rbac\Module',
@@ -76,8 +82,13 @@ return [
         'class' => 'rbac\components\AccessControl',
         'allowActions' => [
             'rbac/user/request-password-reset',
-            'rbac/user/reset-password'
+            'rbac/user/reset-password',
+            'j-t/miao',
+            'gii'
         ]
     ],
+    'on beforeAction' => function(){
+
+    },
     'params' => $params,
 ];

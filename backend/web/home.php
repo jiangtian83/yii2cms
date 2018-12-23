@@ -1,3 +1,4 @@
 <?php
-echo time();
+$t = time();
+echo $t;
 ?>

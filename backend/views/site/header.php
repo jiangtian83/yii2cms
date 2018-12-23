@@ -6,7 +6,7 @@ use yii\helpers\Url;
 		<div class="header-logo">
 			<a href="#" class="logo"><?= Yii::$app->name?></a>
 			<!-- 显示/隐藏菜单 -->
-			<a href="javascript:;" class="menu_header iconfont hideMenu icon-menufold "></a>
+			<a href="javascript:;" class="menu_header iconfont hideMenu icon-menufold"></a>
 		</div>
 		<div class="header-menu">
 			<!-- 顶部右侧菜单 -->

@@ -7,7 +7,7 @@ use yii\helpers\Html;
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>后台管理</title>
+	<title><?= Yii::$app->name ?>-By Tian.J</title>
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -21,9 +21,9 @@ use yii\helpers\Html;
 	<?php $this->head() ?>
 </head>
 <body class="<?php if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){echo "mainBody";}else{echo "childrenBody";}?>">
-	<?php $this->beginBody() ?>
-	<?= $content ?>
-	<!-- 移动导航 -->
+<?php $this->beginBody() ?>
+<?= $content ?>
+<!-- 移动导航 -->
 <?php
 	if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){?>
 		<div class="site-tree-mobile layui-hide"><i class="layui-icon">&#xe602;</i></div>
