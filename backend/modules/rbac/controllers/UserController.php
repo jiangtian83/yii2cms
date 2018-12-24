@@ -79,7 +79,6 @@ class UserController extends Controller
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        die;
 
         return $this->render('index', [
                 'searchModel' => $searchModel,
@@ -157,6 +156,8 @@ class UserController extends Controller
         if (!Yii::$app->getUser()->isGuest) {
             return $this->goHome();
         }
+
+        echo $this->layout;die;
 
         $model = new Login();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
