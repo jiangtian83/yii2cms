@@ -157,8 +157,6 @@ class UserController extends Controller
             return $this->goHome();
         }
 
-        echo $this->layout;die;
-
         $model = new Login();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
             return $this->goBack();
