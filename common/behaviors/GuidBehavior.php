@@ -11,7 +11,28 @@
 namespace common\behaviors;
 
 
-class GuidBehavior
-{
+use common\Guid;
+use yii\behaviors\AttributeBehavior;
+use yii\db\ActiveRecord;
 
+class GuidBehavior extends AttributeBehavior
+{
+    public $attributes = [
+          ActiveRecord::EVENT_BEFORE_INSERT => ['guid']
+    ];
+
+    /**
+     * 获取guid
+     * @param \yii\base\Event $event
+     * @return mixed|string
+     */
+    public function getValue($event)
+    {
+        if ($this->value === null) {
+            $guid = new Guid();
+            return $guid->getGuid();
+        }
+
+        return parent::getValue($event);
+    }
 }

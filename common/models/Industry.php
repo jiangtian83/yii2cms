@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Faker\Provider\Base;
 use Yii;
 
 /**
@@ -14,7 +15,7 @@ use Yii;
  * @property int $created_at 创建时间
  * @property int $updated_at 更新时间
  */
-class Industry extends \yii\db\ActiveRecord
+class Industry extends BaseModel
 {
     /**
      * {@inheritdoc}
@@ -30,8 +31,9 @@ class Industry extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['pid', 'creator', 'created_at', 'updated_at'], 'integer'],
+            [['pid', 'creator', 'editor', 'created_at', 'updated_at'], 'integer'],
             [['industry_name'], 'string', 'max' => 100],
+            [['industry_name'], 'unique']
         ];
     }
 
@@ -45,8 +47,21 @@ class Industry extends \yii\db\ActiveRecord
             'industry_name' => '行业名称',
             'pid' => '父级行业',
             'creator' => '创建者',
+            'editor' => '编辑',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
         ];
+    }
+
+    /**
+     * 关联用户
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser(){
+        return $this->hasOne(User::class, ['id' => 'creator']);
+    }
+
+    public function getParent(){
+        return $this->hasOne(Industry::class, ['id' => 'pid'])->from(Industry::tableName() . ' parent');
     }
 }

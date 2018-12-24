@@ -76,7 +76,7 @@ return [
                 "<controller:\w+>/<id:\d+>"=>"<controller>/view",
                 "<controller:\w+>/<action:\w+>"=>"<controller>/<action>"
             ],
-        ],
+        ]
     ],
     'as access' => [
         'class' => 'rbac\components\AccessControl',
@@ -86,15 +86,6 @@ return [
             'j-t/miao',
             'gii'
         ]
-    ],
-    'as timestamp' => [
-        'class' => \yii\behaviors\TimestampBehavior::class,
-        'value' => new \yii\db\Expression('NOW()')
-    ],
-    'as content' => [
-        'class' => \yii\behaviors\BlameableBehavior::class,
-        'createdByAttribute' => 'creator',
-        'updatedByAttribute' => false
     ],
     'on beforeAction' => function(){
 

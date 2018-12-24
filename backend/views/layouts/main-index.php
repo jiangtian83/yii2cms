@@ -20,7 +20,7 @@ use yii\helpers\Html;
 	<title><?= Html::encode($this->title) ?></title>
 	<?php $this->head() ?>
 </head>
-<body class="<?php if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){echo "mainBody";}else{echo "childrenBody";}?>" style="padding: 0 20px;">
+<body class="<?php if(Yii::$app->controller->id=='site' && Yii::$app->controller->action->id=='index'){echo "mainBody";}else{echo "childrenBody padding";}?>">
 <?php $this->beginBody() ?>
 <?= $content ?>
 <!-- 移动导航 -->
@@ -30,6 +30,15 @@ use yii\helpers\Html;
 		<div class="site-mobile-shade"></div>
 <?php } ?>
 <?php $this->endBody() ?>
+
+<?php
+$css =<<<CSS
+    .padding {
+        padding: 0 20px;
+    }
+CSS;
+$this->registerCss($css);
+?>
 </body>
 </html>
 <?php $this->endPage() ?>

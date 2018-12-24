@@ -20,16 +20,43 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'header' => '序号'
+            ],
 
-            'id',
+            //'id',
             'industry_name',
-            'pid',
-            'creator',
-            'created_at',
+            [
+                'label' => '父级行业',
+                'format' => 'raw',
+                'value' => function($m){
+                    if ($m->pid === 0) {
+                        return '一级行业';
+                    } else {
+                        $model = \common\models\Industry::findOne(['id' => $m->pid]);
+                        return is_null($model) ? '一级行业' : $model->industry_name;
+                    }
+                }
+            ],
+            [
+                'label' => '添加人',
+                'format' => 'raw',
+                'value' => function($m){
+                    return $m->user->username;
+                }
+            ],
+            [
+                'label'=>'创建日期',
+                'format' => ['date', 'php:Y-m-d H:i:s'],
+                'value' => 'created_at'
+            ],
             //'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => '操作'
+            ],
         ],
     ]); ?>
 </div>

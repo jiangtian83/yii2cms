@@ -37,6 +37,7 @@ class IndustryController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Industry::find(),
+            'pagination' => [ 'pageSize' => 10 ]
         ]);
 
         return $this->render('index', [
