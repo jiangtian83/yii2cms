@@ -9,6 +9,19 @@ html, body{
     height: 100%;
 }
 
+a:link,a:hover,a:active,a:visited{
+    text-decoration: none!important;
+    color: #fff!important;
+}
+
+.jt-hidden {
+    display: none;
+}
+
+.jt-show {
+    display: block;
+}
+
 .jt-opacity-1 {
     opacity: .1;
 }
@@ -295,6 +308,10 @@ i:hover, .jt-cursor-pointer{
 
 .jt-margin-right-10 {
     margin-right: 10px!important;
+}
+
+.jt-width-100 {
+    width: 100px;
 }
 
 .jt-width-80 {

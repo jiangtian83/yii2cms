@@ -53,7 +53,7 @@ class Exhibition extends BaseModel
             [['name', 'summary', 'qualification'], 'string', 'max' => 255],
             [['place', 'duration', 'sponsor'], 'string', 'max' => 100],
             [['contents'], 'string', 'max' => 2000],
-            [['guid'], 'unique'],
+            [['guid', 'period'], 'unique'],
             [['creator'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['creator' => 'id']],
             [['editor'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['editor' => 'id']],
             [['industryId'], 'exist', 'skipOnError' => true, 'targetClass' => Industry::className(), 'targetAttribute' => ['industryId' => 'id']],

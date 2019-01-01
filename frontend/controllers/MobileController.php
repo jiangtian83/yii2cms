@@ -10,9 +10,18 @@
 
 namespace frontend\controllers;
 
-
+use Aliyun\Sms;
+use common\models\Exhibition;
+use common\models\ExhibitionCenter;
+use common\models\Fans;
+use common\models\Industry;
+use common\models\Msg;
+use common\models\SocialInfo;
+use rbac\models\User;
+use yii;
 use common\Guid;
 use yii\web\Controller;
+use yii\web\Response;
 
 class MobileController extends Controller
 {
@@ -50,7 +59,22 @@ class MobileController extends Controller
      */
     public function actionIndex (){
         $this->title = "首页";
-        return $this->render("index");
+
+        $industry = Industry::findAll(['pid' => 0]);
+        $id = [];
+
+        foreach ($industry as $item) {
+            $id[] = $item->id;
+        }
+
+        $subIndustry = Industry::find()->where(['in', 'pid', $id])->all();
+
+        return $this->render("index", [
+            'model' => [
+                $industry,
+                $subIndustry
+            ]
+        ]);
     }
 
     /**
@@ -134,14 +158,30 @@ class MobileController extends Controller
      * 药品器械展
      * @return string
      */
-    public function actionExhibition ($type = 0) {
-        $this->title = "第一期展会";
-        $this->showFoldIcon = false;
-        $this->showBackIcon = true;
-        $title = $type == 0 ? "器械展" : "药品展";
-        return $this->render("exhibition", [
-            'title' => $title
-        ]);
+    public function actionExhibition () {
+        $id = Yii::$app->request->get("id");
+        $industry = Industry::findOne($id);
+        if (empty($industry)) {
+            return $this->redirect("/mobile/index");
+        } else {
+            $exhibition = Exhibition::find()->orderBy('period DESC')->one();
+            if (empty($exhibition)) {
+                return $this->redirect("/mobile/index");
+            }
+            $this->title = "第" . $this->numToWord($exhibition->period) . "期展会";
+            $this->showFoldIcon = false;
+            $this->showBackIcon = true;
+            $title = $industry->industry_name . "展";
+            $model = ExhibitionCenter::find()->where(['exhibitionId' => $exhibition->guid, 'industryId' => $id])->orderBy('created_at asc')->limit(10)->all();
+            if (empty($model)) {
+                return $this->redirect("/mobile/index");
+            }
+
+            return $this->render("exhibition", [
+                'title' => $title,
+                'model' => $model
+            ]);
+        }
     }
 
     /**
@@ -172,7 +212,19 @@ class MobileController extends Controller
         $this->title = "私信";
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
-        return $this->render("privateMsg");
+
+        // 获取用户详情
+        $uid = Yii::$app->request->cookies->getValue('u');
+        $user = \common\models\User::findOne($uid ? $uid : 0);
+        if ($user) {
+            $msg = Msg::find()->leftJoin('t_user', 't_msg.senderId=t_user.id')->where(['ownerId' => $uid, 'scene' => Msg::MSG_SCENE_PRIVATE])->select('t_user.id,t_user.nickname,t_user.head_pic,t_msg.*')->orderBy("created_at desc")->limit(8)->asArray()->all();
+        } else {
+            return $this->redirect('index');
+        }
+
+        return $this->render("privateMsg", [
+            'msg' => $msg
+        ]);
     }
 
     /**
@@ -206,7 +258,24 @@ class MobileController extends Controller
         $this->showFoldIcon = true;
         $this->showSetting = true;
         $this->showBackIcon = true;
-        return $this->render("my");
+
+        // 获取用户详情
+        $uid = Yii::$app->request->cookies->getValue('u');
+        $user = \common\models\User::findOne($uid ? $uid : 0);
+        $result = [];
+        if ($user) {
+            $result['id'] = $uid;
+            $result['nickname'] = $user->nickname;
+            $result['avatar'] = $user->head_pic;
+        } else {
+            return $this->redirect('index');
+        }
+
+        $result['fans'] = Fans::find()->where(['anchorId' => $uid, 'status' => 1])->count();
+        $result['follows'] = Fans::find()->where(['fansId' => $uid, 'status' => 1])->count();
+        $result['likes'] = rand(0, 999); // todo,待确认
+
+        return $this->render("my", $result);
     }
 
     /**
@@ -323,5 +392,192 @@ class MobileController extends Controller
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
         return $this->render("anchorApplication");
+    }
+
+    /**
+     * 把数字1-1亿换成汉字表述，如：123->一百二十三
+     * @param [num] $num [数字]
+     * @return [string] [string]
+     */
+    private function numToWord($num)
+    {
+        $chiNum = array('零', '一', '二', '三', '四', '五', '六', '七', '八', '九');
+        $chiUni = array('', '十', '百', '千', '万', '亿', '十', '百', '千');
+
+        $num_str = (string)$num;
+
+        $count = strlen($num_str);
+        $last_flag = true; //上一个 是否为0
+        $zero_flag = true; //是否第一个
+        $temp_num = null; //临时数字
+
+        $chiStr = '';//拼接结果
+        if ($count == 2) {//两位数
+            $temp_num = $num_str[0];
+            $chiStr = $temp_num == 1 ? $chiUni[1] : $chiNum[$temp_num] . $chiUni[1];
+            $temp_num = $num_str[1];
+            $chiStr .= $temp_num == 0 ? '' : $chiNum[$temp_num];
+        } else if ($count > 2) {
+            $index = 0;
+            for ($i = $count - 1; $i >= 0; $i--) {
+                $temp_num = $num_str[$i];
+                if ($temp_num == 0) {
+                    if (!$zero_flag && !$last_flag) {
+                        $chiStr = $chiNum[$temp_num] . $chiStr;
+                        $last_flag = true;
+                    }
+                } else {
+                    $chiStr = $chiNum[$temp_num] . $chiUni[$index % 9] . $chiStr;
+                    $zero_flag = false;
+                    $last_flag = false;
+                }
+                $index++;
+            }
+        } else {
+            $chiStr = $chiNum[$num_str[0]];
+        }
+        return $chiStr;
+    }
+
+    /**
+     * 发送验证码
+     * @return array
+     */
+    public function actionGetCode () {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $number = Yii::$app->request->get("number");
+
+        if (empty($number)) {
+            return ['IsSuccess' => 0, 'ErrMsg' => '电话号码为空！'];
+        }
+
+        $session = Yii::$app->session;
+        $md5 = md5($number);
+        $result = $session->get($md5);
+        if (!empty($result) && $session[$md5]['expire_time'] > time()) {
+            return ['IsSuccess' => 0, 'ErrMsg' => '5分钟内请勿重复获取验证码！', 'Data' => $result['code']];
+        } else {
+            try {
+                Sms::$number = $number;
+                Sms::$signName = "看看展会";
+                Sms::$tempCode = "SMS_153993364";
+                $code = Sms::sendSms();
+            } catch (\HttpRequestException $exception) {
+                return ['IsSuccess' => 0, 'ErrMsg' => '请求短信API失败！'];
+            }
+
+            return ['IsSuccess' => 1, 'ErrMsg' => '', 'Data' => $code];
+        }
+    }
+
+    /**
+     * 执行登录
+     */
+    public function actionLoginDo () {
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
+        $session = Yii::$app->session;
+        $code = $session->get(md5($data['number']));
+        if (!empty($code) && $code['expire_time'] > time() && $data['code'] == $code['code']) {
+            $user = \common\models\User::find()->where(['mobile' => $data['number']])->one();
+            $expire = time() + 86400;
+            if ($user) {
+                $user->generateAccessToken($expire);
+                $user->update(false);
+                // return ['IsSuccess' => 1, 'ErrMsg' => '登录成功！'];
+                $session->set(md5($user->id), [
+                    'status' => 1,
+                    'expire_time' => $expire
+                ]);
+                $cookies = $response->cookies;
+
+                $cookies->add(new \yii\web\Cookie([
+                    'name' => 'u',
+                    'value' => $user->id,
+                    'expire'=> $expire
+                ]));
+                return $this->redirect("/mobile/index");
+            } else {
+                $user = new \common\models\User();
+                $user->generateAuthKey();
+                $user->password_hash = Yii::$app->security->generatePasswordHash($data['number']);
+                $user->username = $user->nickname = strtoupper(md5($data['number']));
+                $user->head_pic = "https://resources.alilinet.com/20170609/caec0ef6f07036203d555810fd81c75a.jpg";
+                $user->email = $data['number'] . "@qq.com";
+                $user->status = 10;
+                $user->r_id = 6;
+                $user->created_at = $user->last_login_date = $user->updated_at =  time();
+                $ip = Yii::$app->request->getUserIP();
+                if ($ip === "127.0.0.1") {$adress = 'localhost';}
+                else {
+                    $adress = $this->getCity($ip);
+                }
+                $user->created_address = $user->last_login_address = $adress;
+                $user->mobile = $data['number'];
+                $user->created_ip = $user->last_login_ip = $ip;
+                $user->integral = 0;
+                $user->balance = 0;
+                if ($user->save()) {
+                    $user->generateAccessToken($expire);
+                    $user->update(false);
+                    $session->set(md5($user->id), [
+                        'status' => 1,
+                        'expire_time' => $expire
+                    ]);
+
+                    $cookies = $response->cookies;
+
+                    $cookies->add(new \yii\web\Cookie([
+                        'name' => 'u',
+                        'value' => $user->id,
+                        'expire'=> $expire
+                    ]));
+
+                    return $this->redirect("/mobile/index");
+                    // return ['IsSuccess' => 1, 'ErrMsg' => '注册成功！'];
+                } else {
+                    return ['IsSuccess' => 0, 'ErrMsg' => '注册失败！' . json_encode($user->getErrors(), JSON_UNESCAPED_UNICODE)];
+                }
+            }
+        } else {
+            return ['IsSuccess' => 1, 'ErrMsg' => '验证码不正确！'];
+        }
+    }
+
+    /**
+     * 退出登录
+     * @return Response
+     */
+    public function actionLogout () {
+        $user = Yii::$app->request->cookies->get("u");
+        Yii::$app->session->remove(md5($user));
+        Yii::$app->response->cookies->remove($user);
+        return $this->redirect("/mobile/index");
+    }
+
+    /**
+     * 根据ip获取城市
+     * @param string $ip
+     * @return array|bool
+     */
+    private function getCity($ip = '')//获取地区
+    {
+        $url = "http://ip.taobao.com/service/getIpInfo.php?ip=" . $ip;//淘宝接口需要填写ip
+        $ip = json_decode(file_get_contents($url));
+        if ((string) $ip->code == '1'){
+            return false;
+        }
+        $data = (array) $ip->data;
+
+        return $data;
+    }
+
+    /**
+     * 测试
+     */
+    public function actionTest(){
+        $guid = new Guid();
+        echo $guid->getGuid();
     }
 }

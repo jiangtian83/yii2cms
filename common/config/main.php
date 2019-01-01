@@ -35,6 +35,9 @@ return [
                 ]
             ],
         ],
-        'db' => require(__DIR__ . '/db.php')
+        'db' => require(__DIR__ . '/db.php'),
+        'session' => [
+            'savePath' => dirname(dirname(__DIR__)) . "/tmp"
+        ]
     ],
 ];

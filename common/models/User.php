@@ -220,11 +220,15 @@ class User extends ActiveRecord implements IdentityInterface
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
-    public function generateAccessToken($expire_time)
-    {
+    /**
+     * @param $Expire_time
+     * @return string
+     */
+    public function generateAccessToken($expire_time) {
         $this->access_token = Yii::$app->security->generateRandomString().'_'.$expire_time;
         return $this->access_token;
     }
+
     /**
      * Generates new password reset token
      */

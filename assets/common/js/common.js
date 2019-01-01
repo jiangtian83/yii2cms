@@ -6,6 +6,7 @@
  */
 var t = ".jt-apply-tab";
 var a = ".jt-tab-item";
+var timer = null;
 
 /**
  * 应用聚焦/当前则加下border-白色3px，否则移除
@@ -30,4 +31,63 @@ var a = ".jt-tab-item";
         $(this).find("span").addClass("jt-cur").end().siblings().find("span").removeClass("jt-cur");
         $(a).eq(index).removeClass("jt-display-none").siblings(a).addClass("jt-display-none");
     });
+    $("#smscode").click(getCode);
+    $("#login").click(function (e) {
+        $.post(
+            '/mobile/login-do',
+            $('#loginform').serialize(),
+            function (data) {
+                console.log(data);
+                if (data.IsSuccess) {
+                    layer.alert(data.ErrMsg);
+                }
+            }
+        );
+    });
 }())
+;function menu() {
+    $(".drop-menu").slideToggle(100);
+}
+;function getCode() {
+    var o = this;
+    var input = $(o).prev("input");
+    var number = input.val();
+    var total = 60;
+    if (!number) {
+        layer.tips("电话号码为空！", input, {
+            'tips' : [1, '#000']
+        });
+        return ;
+    } else {
+        $(o).unbind("click");
+    }
+    var url = '/mobile/get-code?number=' + number;
+
+    $.get(
+        url,
+        function (data) {
+            console.log(data);
+            if (!data.IsSuccess) {
+                layer.alert(data.ErrMsg);
+            } else {
+                var timer = setInterval(function () {
+                    if (total === 0) {
+                        $(o).text("获取验证码").css("color", '#000000');
+                        $(o).bind("click", getCode);
+                        clearInterval(timer)
+                    } else {
+                        $(o).text(total-- + "s").css("color", '#e1e1e1');
+                    }
+                }, 1000);
+            }
+        }
+    );
+}
+;function login(o) {
+    $.get(
+        '/mobile/login',
+        function (data) {
+            console.log(data);
+        }
+    );
+}

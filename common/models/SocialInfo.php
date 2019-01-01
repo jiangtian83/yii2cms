@@ -29,7 +29,7 @@ class SocialInfo extends \yii\db\ActiveRecord
         return [
             [['guid', 'ownerId'], 'required'],
             [['type'], 'integer'],
-            [['guid', 'ownerId'], 'string', 'max' => 60],
+            [['guid', 'ownerId', 'source_table'], 'string', 'max' => 60],
             [['guid'], 'unique'],
         ];
     }
@@ -43,6 +43,7 @@ class SocialInfo extends \yii\db\ActiveRecord
             'guid' => '全局唯一id',
             'ownerId' => '所属id',
             'type' => '类型，0阅读次数，1点赞次数，2分享次数，3收藏次数',
+            'source_table' => '关联表'
         ];
     }
 }

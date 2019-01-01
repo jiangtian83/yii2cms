@@ -17,32 +17,40 @@ $asset = MobileAsset::register($this);
     <div class="layui-row">
         <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
             <div class="jt-col-md-11 jt-radius-15 jt-shadow-1 jt-height-250 jt-border-1 jt-text-align-center">
-                <img src="<?= $asset->baseUrl ?>/common/images/index_03.png" class="jt-col-md-12 jt-radius-left-top-15 jt-margin-bottom-30" style="max-height: 190px; margin-bottom: 21px;"/>
-                <span class="jt-font-weight-700 jt-font-color-gray">药品展</span>
+                <a href="/mobile/exhibition?id=1">
+                    <img src="<?= $asset->baseUrl ?>/common/images/index_03.png" class="jt-col-md-12 jt-radius-left-top-15 jt-margin-bottom-30" style="max-height: 190px; margin-bottom: 21px;"/>
+                    <span class="jt-font-weight-700 jt-font-color-gray">药品展</span>
+                </a>
             </div>
         </div>
         <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
             <div class="jt-col-md-11 jt-radius-15 jt-shadow-1 jt-height-250 jt-border-1 jt-text-align-center">
-                <img src="<?= $asset->baseUrl ?>/common/images/index_02.png" class="jt-col-md-12 jt-radius-left-top-15"  style="max-height: 190px; margin-bottom: 21px;"/>
-                <span class="jt-font-weight-700 jt-font-color-gray">器械展</span>
+                <a href="/mobile/exhibition?id=2">
+                    <img src="<?= $asset->baseUrl ?>/common/images/index_02.png" class="jt-col-md-12 jt-radius-left-top-15"  style="max-height: 190px; margin-bottom: 21px;"/>
+                    <span class="jt-font-weight-700 jt-font-color-gray">器械展</span>
+                </a>
             </div>
         </div>
         <div class="layui-col-xs2 layui-col-sm2 layui-col-md2">
             <div class="jt-col-md-12 jt-radius-15 jt-shadow-1 jt-height-250 jt-border-1 jt-position-relative jt-overflow-hidden">
-                <img src="<?= $asset->baseUrl ?>/common/images/index_01.png" class="jt-height-percent-100 jt-radius-left-top-15 jt-position-absolute jt-zindex--1"/>
-                <span class="jt-font-color-gray jt-vertical-font">往期展会</span>
+                <a href="/mobile/history-exhibition">
+                    <img src="<?= $asset->baseUrl ?>/common/images/index_01.png" class="jt-height-percent-100 jt-radius-left-top-15 jt-position-absolute jt-zindex--1"/>
+                    <span class="jt-font-color-gray jt-vertical-font">往期展会</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
 <div class="jt-line-15"></div>
 <div class="layui-container">
-    <div class="jt-mask jt-background-grad jt-position-absolute jt-height-percent-100 jt-md-justify-12"></div>
-    <div class="jt-position-absolute jt-vertical-icon jt-text-align-center">
-        <img src="<?= $asset->baseUrl ?>/common/images/video_icon.png"/>
-        <span class="jt-color-white jt-font-size-30 jt-vertical-align-middle" style="margin-left: 20px;">直播</span>
-    </div>
-    <img src="<?= $asset->baseUrl ?>/common/images/index_04.png" class="jt-col-md-12"/>
+    <a href="/mobile/found?type=follow">
+        <div class="jt-mask jt-background-grad jt-position-absolute jt-height-percent-100 jt-md-justify-12"></div>
+        <div class="jt-position-absolute jt-vertical-icon jt-text-align-center">
+            <img src="<?= $asset->baseUrl ?>/common/images/video_icon.png"/>
+            <span class="jt-color-white jt-font-size-30 jt-vertical-align-middle" style="margin-left: 20px;">直播</span>
+        </div>
+        <img src="<?= $asset->baseUrl ?>/common/images/index_04.png" class="jt-col-md-12"/>
+    </a>
 </div>
 <div class="jt-line-15"></div>
 <div class="layui-container">
@@ -50,15 +58,17 @@ $asset = MobileAsset::register($this);
     <table class="jt-col-md-12">
         <thead class="jt-col-md-12">
         <tr class="jt-background-grad jt-height-40">
+            <?php if (!empty($model[0])) { ?>
+            <?php foreach ($model[0] as $item) { ?>
             <th class="jt-color-white jt-col-md-6 jt-text-align-center">
-                药品
+                <?= $item->industry_name ?>
             </th>
-            <th class="jt-color-white jt-col-md-6 jt-text-align-center">
-                器械
-            </th>
+            <?php }} ?>
         </tr>
         </thead>
         <tbody>
+        <?php if (!empty($model[1])) { ?>
+        <?php foreach ($model as $item) { ?>
         <tr class="jt-height-40" style="border-left: 1px solid #000000; border-right: 1px solid #000000; border-bottom: 1px solid #000000;">
             <td class="jt-text-align-center jt-font-color-gray" style="border-right: 1px solid #000000;">
                 OTC
@@ -67,22 +77,7 @@ $asset = MobileAsset::register($this);
                 一类
             </td>
         </tr>
-        <tr class="jt-height-40" style="border-left: 1px solid #000000; border-right: 1px solid #000000; border-bottom: 1px solid #000000;">
-            <td class="jt-text-align-center jt-font-color-gray" style="border-right: 1px solid #000000;">
-                临床
-            </td>
-            <td class="jt-text-align-center jt-font-color-gray">
-                二类
-            </td>
-        </tr>
-        <tr class="jt-height-40" style="border-left: 1px solid #000000; border-right: 1px solid #000000; border-bottom: 1px solid #000000;">
-            <td class="jt-text-align-center jt-font-color-gray" style="border-right: 1px solid #000000;">
-                保健品
-            </td>
-            <td class="jt-text-align-center jt-font-color-gray">
-                三类
-            </td>
-        </tr>
+        <?php }} ?>
         </tbody>
     </table>
 </div>
