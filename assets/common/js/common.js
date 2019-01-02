@@ -44,6 +44,18 @@ var timer = null;
             }
         );
     });
+    $("#bmsubmit").click(function(){
+        var data = $("#bm").serialize();
+        console.log(data);
+        $.post(
+            "/mobile/sign-up",
+            data,
+            function (data) {
+                console.log(data);
+                layer.alert(data.ErrMsg);
+            }
+        );
+    });
 }())
 ;function menu() {
     $(".drop-menu").slideToggle(100);
@@ -90,4 +102,9 @@ var timer = null;
             console.log(data);
         }
     );
+}
+;function selectIndustry() {
+    console.log(8888);
+    var form = document.getElementById("selectIndustry");
+    form.submit();
 }

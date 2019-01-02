@@ -13,9 +13,11 @@ namespace frontend\controllers;
 use Aliyun\Sms;
 use common\models\Exhibition;
 use common\models\ExhibitionCenter;
+use common\models\ExhibitionSignUp;
 use common\models\Fans;
 use common\models\Industry;
 use common\models\Msg;
+use common\models\Products;
 use common\models\SocialInfo;
 use rbac\models\User;
 use yii;
@@ -60,20 +62,18 @@ class MobileController extends Controller
     public function actionIndex (){
         $this->title = "首页";
 
-        $industry = Industry::findAll(['pid' => 0]);
-        $id = [];
+        $industry = Industry::find()->where(['pid' => 0])->asArray()->limit(2)->all();
+        $industries = [];
 
-        foreach ($industry as $item) {
-            $id[] = $item->id;
+        foreach ($industry as $key => $item) {
+            $subIndustry = Industry::find()->where(['pid' => $item['id']])->asArray()->all();
+            if (!empty($subIndustry)) {
+                $industries[$key] = array_merge([$item], $subIndustry);
+            }
         }
 
-        $subIndustry = Industry::find()->where(['in', 'pid', $id])->all();
-
         return $this->render("index", [
-            'model' => [
-                $industry,
-                $subIndustry
-            ]
+            'industries' => $industries
         ]);
     }
 
@@ -82,10 +82,55 @@ class MobileController extends Controller
      * @return string
      */
     public function actionList () {
-        $this->title = "药品";
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
-        return $this->render("list");
+
+        $this->redirectToHome();
+
+        $data = Yii::$app->request->get();
+
+        if (empty($data) || empty($data['id'])) return $this->redirect("/mobile/index");
+
+        $title = Industry::findOne(['id' => $data['id']]);
+
+        if (empty($title)) $this->redirect("/mobile/index");
+        $this->title = $title->industry_name;
+
+        // 顶级行业，pid为0，其他不带pid参数
+        if (isset($data['pid'])) {
+            $ids = Industry::find()->where(['pid' => $data['id']])->select('id')->all();
+            $ids = yii\helpers\ArrayHelper::getColumn($ids, 'id');
+            $products = Products::find()->where(['isOnSale' => 1, 'isPassed' => 1, 'isDeleted' => 0])->andWhere(['in', 'industryId', $ids])->asArray()->all();
+        } else {
+            $products = Products::find()->where(['industryId' => $data['id'], 'isOnSale' => 1, 'isPassed' => 1, 'isDeleted' => 0])->asArray()->all();
+        }
+
+        if (empty($products)) $this->redirect("/mobile/index");
+
+        if (isset($data['pid'])) {
+            $menu = Industry::find()->where(['pid' => $data['id']])->all();
+        } else {
+            $son = Industry::findOne(['id' => $data['id']]);
+            if (empty($son)) {
+                return $this->redirect("/mobile/index");
+            } else {
+                $menu = Industry::find()->where(['pid' => $son->pid])->all();
+            }
+        }
+
+        $current = null;
+        if (empty ($menu)) $this->redirect('/mobile/index');
+        else {
+            $current = isset($data['pid']) ? $menu[0]->id : $data['id'];
+        }
+
+        $menu = yii\helpers\ArrayHelper::map($menu, 'id', 'industry_name');
+
+        return $this->render("list", [
+            'current' => $current,
+            'menu' => $menu,
+            'products' => $products
+        ]);
     }
 
     /**
@@ -243,10 +288,28 @@ class MobileController extends Controller
      * @return string
      */
     public function actionHistoryExhibition () {
+        $this->redirectToHome();
         $this->title = "往期展会";
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
-        return $this->render("historyExhibition");
+
+        $new = Exhibition::find()->where(['period' => Exhibition::find()->max("period"), 'isActive' => 1, 'isDeleted' => 0])->asArray()->one();
+        $period = $new['period'];
+        $new['period'] = $this->numToWord($period);
+        $industry = Industry::findOne(['id' => $new['industryId']]);
+        $new['industryName'] = $industry ? $industry['industry_name'] : '';
+        $history = Exhibition::find()->where(['<>', 'period', $period])->andWhere(['isActive' => 1, 'isDeleted' => 0])->orderBy('period desc')->limit(5)->asArray()->all();
+        $history_array = array_map(function($m){
+            $m['period'] = $this->numToWord($m['period']);
+            $industry = Industry::findOne(['id' => $m['industryId']]);
+            $m['industryName'] = $industry ? $industry['industry_name'] : '';
+            return $m;
+        }, $history);
+
+        return $this->render("historyExhibition", [
+            'new' => $new,
+            'history' => $history_array
+        ]);
     }
 
     /**
@@ -481,13 +544,12 @@ class MobileController extends Controller
         $code = $session->get(md5($data['number']));
         if (!empty($code) && $code['expire_time'] > time() && $data['code'] == $code['code']) {
             $user = \common\models\User::find()->where(['mobile' => $data['number']])->one();
-            $expire = time() + 86400;
+            $expire = time() + 300;
             if ($user) {
                 $user->generateAccessToken($expire);
                 $user->update(false);
                 // return ['IsSuccess' => 1, 'ErrMsg' => '登录成功！'];
                 $session->set(md5($user->id), [
-                    'status' => 1,
                     'expire_time' => $expire
                 ]);
                 $cookies = $response->cookies;
@@ -512,6 +574,7 @@ class MobileController extends Controller
                 if ($ip === "127.0.0.1") {$adress = 'localhost';}
                 else {
                     $adress = $this->getCity($ip);
+                    return $adress;
                 }
                 $user->created_address = $user->last_login_address = $adress;
                 $user->mobile = $data['number'];
@@ -522,7 +585,6 @@ class MobileController extends Controller
                     $user->generateAccessToken($expire);
                     $user->update(false);
                     $session->set(md5($user->id), [
-                        'status' => 1,
                         'expire_time' => $expire
                     ]);
 
@@ -556,6 +618,13 @@ class MobileController extends Controller
         return $this->redirect("/mobile/index");
     }
 
+    private function redirectToHome () {
+        $user = Yii::$app->request->cookies->get("u");
+        if (empty($user)) {
+            return $this->redirect("/mobile/index");
+        }
+    }
+
     /**
      * 根据ip获取城市
      * @param string $ip
@@ -571,6 +640,44 @@ class MobileController extends Controller
         $data = (array) $ip->data;
 
         return $data;
+    }
+
+    /**
+     * 参展报名
+     * @return array|Response
+     */
+    public function actionSignUp () {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
+        if (empty($data) || !isset($data['exhibitionId']) || !isset($data['orginazationName']) || !isset($data['contacts']) || !isset($data['telephone'])) {
+            return ['IsSuccess' => 0, 'ErrMsg' => '报名厂家、联系人或联系电话不能为空！'];
+        } else {
+            $signup = new ExhibitionSignUp();
+            $data['isDeleted'] = 0;
+            $result['ExhibitionSignUp'] = $data;
+            if(!$signup->load($result) || !$signup->save()) {
+                return ['IsSuccess' => 0, 'ErrMsg' => '提交报名失败。' . $this->getModelError($signup)];
+            } else {
+                return $this->redirect("/mobile/index");
+            }
+        }
+    }
+
+    /**
+     * @param $model yii\db\ActiveRecord
+     * @return bool|mixed
+     */
+    private function getModelError($model) {
+        $errors = $model->getErrors();    //得到所有的错误信息
+        if(!is_array($errors)){
+            return true;
+        }
+
+        $firstError = array_shift($errors);
+        if(!is_array($firstError)) {
+            return true;
+        }
+        return array_shift($firstError);
     }
 
     /**

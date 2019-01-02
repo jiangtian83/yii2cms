@@ -30,7 +30,7 @@ class Media extends \yii\db\ActiveRecord
         return [
             [['guid', 'ownerId', 'path'], 'required'],
             [['type'], 'integer'],
-            [['guid', 'ownerId'], 'string', 'max' => 60],
+            [['guid', 'ownerId', 'source_table'], 'string', 'max' => 60],
             [['path'], 'string', 'max' => 255],
             [['guid'], 'unique'],
         ];
@@ -46,6 +46,7 @@ class Media extends \yii\db\ActiveRecord
             'ownerId' => '所属id',
             'type' => '媒体类型，0图片，1视频',
             'path' => '媒体路径',
+            'source_table' => '来源表'
         ];
     }
 }

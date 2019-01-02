@@ -5,6 +5,8 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use common\behaviors\GuidBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%exhibition_sign_up}}".
@@ -25,6 +27,14 @@ class ExhibitionSignUp extends ActiveRecord
         return array_merge(parent::behaviors(), [
             [
                 'class' => GuidBehavior::class
+            ],
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['signUpTime'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['signUpTime'],
+                ],
+                'value' => new Expression('UNIX_TIMESTAMP()')
             ]
         ]);
     }
@@ -43,12 +53,12 @@ class ExhibitionSignUp extends ActiveRecord
     public function rules()
     {
         return [
-            [['exhibitionId', 'orginazationName', 'contacts', 'telephone'], 'required'],
+            [['exhibitionId', 'orginazationName', 'contacts', 'telephone'], 'required', 'message' => '{attribute}不能为空！'],
             [['isDeleted'], 'integer'],
             [['guid', 'exhibitionId', 'contacts'], 'string', 'max' => 60],
             [['orginazationName'], 'string', 'max' => 100],
             [['telephone'], 'string', 'max' => 11],
-            [['guid'], 'unique'],
+            [['guid', 'telephone'], 'unique', 'message' => '{attribute}已经存在！'],
             [['exhibitionId'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibitionId' => 'guid']],
         ];
     }
@@ -64,7 +74,8 @@ class ExhibitionSignUp extends ActiveRecord
             'orginazationName' => '报名厂家',
             'contacts' => '联系人',
             'telephone' => '联系电话',
-            'isDeleted' => '是否删除'
+            'isDeleted' => '是否删除',
+            'signUpTime' => '报名时间'
         ];
     }
 

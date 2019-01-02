@@ -23,7 +23,7 @@ use yii\helpers\Html;
     <?= Html::csrfMetaTags() ?>
     <?php $this->head() ?>
 </head>
-<body>
+<body class="noselect">
     <?php $this->beginBody() ?>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>

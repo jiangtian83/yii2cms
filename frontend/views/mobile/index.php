@@ -17,7 +17,7 @@ $asset = MobileAsset::register($this);
     <div class="layui-row">
         <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
             <div class="jt-col-md-11 jt-radius-15 jt-shadow-1 jt-height-250 jt-border-1 jt-text-align-center">
-                <a href="/mobile/exhibition?id=1">
+                <a href="/mobile/exhibition?id=2">
                     <img src="<?= $asset->baseUrl ?>/common/images/index_03.png" class="jt-col-md-12 jt-radius-left-top-15 jt-margin-bottom-30" style="max-height: 190px; margin-bottom: 21px;"/>
                     <span class="jt-font-weight-700 jt-font-color-gray">药品展</span>
                 </a>
@@ -25,7 +25,7 @@ $asset = MobileAsset::register($this);
         </div>
         <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
             <div class="jt-col-md-11 jt-radius-15 jt-shadow-1 jt-height-250 jt-border-1 jt-text-align-center">
-                <a href="/mobile/exhibition?id=2">
+                <a href="/mobile/exhibition?id=1">
                     <img src="<?= $asset->baseUrl ?>/common/images/index_02.png" class="jt-col-md-12 jt-radius-left-top-15"  style="max-height: 190px; margin-bottom: 21px;"/>
                     <span class="jt-font-weight-700 jt-font-color-gray">器械展</span>
                 </a>
@@ -55,29 +55,44 @@ $asset = MobileAsset::register($this);
 <div class="jt-line-15"></div>
 <div class="layui-container">
     <div class="jt-column-title jt-col-md-12 jt-height-40 jt-margin-bottom-10 jt-lineheight-40 jt-font-color-gray jt-padding-left-right-10">产品推荐</div>
-    <table class="jt-col-md-12">
-        <thead class="jt-col-md-12">
-        <tr class="jt-background-grad jt-height-40">
-            <?php if (!empty($model[0])) { ?>
-            <?php foreach ($model[0] as $item) { ?>
-            <th class="jt-color-white jt-col-md-6 jt-text-align-center">
-                <?= $item->industry_name ?>
-            </th>
-            <?php }} ?>
-        </tr>
-        </thead>
-        <tbody>
-        <?php if (!empty($model[1])) { ?>
-        <?php foreach ($model as $item) { ?>
-        <tr class="jt-height-40" style="border-left: 1px solid #000000; border-right: 1px solid #000000; border-bottom: 1px solid #000000;">
-            <td class="jt-text-align-center jt-font-color-gray" style="border-right: 1px solid #000000;">
-                OTC
-            </td>
-            <td class="jt-text-align-center jt-font-color-gray">
-                一类
-            </td>
-        </tr>
-        <?php }} ?>
-        </tbody>
-    </table>
+    <div class="jt-background-grad jt-height-40 jt-position-absolute" style="top:50px; left: 15px; width: calc(100% - 30px);z-index: 0;"></div>
+    <ul class="jt-position-absolute" style="zoom:1;overflow: auto;top:50px; left: 15px; width: calc(100% - 30px); z-index: 1;">
+        <?php
+            foreach ($industries as $key => $items) {
+                if ($key === 0) {
+                    ?>
+                    <li class="jt-float-left" style="width: 50%;">
+                        <ul>
+                            <?php
+                                foreach ($items as $k => $item) {
+                                    if ($k === 0) {
+                                        ?>
+                                        <li class="jt-col-md-12 jt-text-align-cente jt-height-40 jt-lineheight-40 jt-text-align-center"><a href="/mobile/list?id=<?= $item['id'] ?>&pid=0" class="jt-color-white"><?= $item['industry_name'] ?></a></li>
+                                    <?php } else { ?>
+                                        <li class="jt-col-md-12 jt-text-align-center jt-height-40 jt-lineheight-40 jt-text-align-center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><a href="/mobile/list?id=<?= $item['id'] ?>" style="color: #888!important;"><?= $item['industry_name'] ?></a></li>
+                                    <?php }
+                                } ?>
+                        </ul>
+                    </li>
+        <?php
+                }else {
+                    ?>
+                    <li class="jt-float-left" style="width: 50%;">
+                        <ul>
+                            <?php
+                            foreach ($items as $k => $item) {
+                                if ($k === 0) {
+                                    ?>
+                                    <li class="jt-col-md-12 jt-text-align-center jt-height-40 jt-lineheight-40 jt-text-align-center"><a href="/mobile/list?id=<?= $item['id'] ?>&pid=0" class="jt-color-white"><?= $item['industry_name'] ?></a></li>
+                                <?php } else { ?>
+                                    <li class="jt-col-md-12 jt-text-align-center jt-height-40 jt-lineheight-40 jt-text-align-center" style="border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: 1px solid #000;"><a href="/mobile/list?id=<?= $item['id'] ?>" style="color: #888!important;"><?= $item['industry_name'] ?></a></li>
+                                <?php }
+                            } ?>
+                        </ul>
+                    </li>
+                    <?php
+                }
+            }
+        ?>
+    </ul>
 </div>
