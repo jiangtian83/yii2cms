@@ -633,7 +633,7 @@ class MobileController extends Controller
     private function getCity($ip = '')//获取地区
     {
         $url = "http://ip.taobao.com/service/getIpInfo.php?ip=" . $ip;//淘宝接口需要填写ip
-        $ip = json_decode(file_get_contents($url));
+        $ip = json_decode(file_get_contents($url, false));
         if ((string) $ip->code == '1'){
             return false;
         }
