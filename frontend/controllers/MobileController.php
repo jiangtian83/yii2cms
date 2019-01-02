@@ -617,6 +617,9 @@ class MobileController extends Controller
      */
     public function actionLogout () {
         $user = Yii::$app->request->cookies->get("u");
+
+        if (empty($user)) return $this->redirect("/mobile/index");
+
         Yii::$app->session->remove(md5($user));
         Yii::$app->response->cookies->remove($user);
         return $this->redirect("/mobile/index");
