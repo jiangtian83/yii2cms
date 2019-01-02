@@ -573,8 +573,12 @@ class MobileController extends Controller
                 $ip = Yii::$app->request->getUserIP();
                 if ($ip === "127.0.0.1") {$adress = 'localhost';}
                 else {
-                    $adress = $this->getCity($ip);
-                    return $adress;
+                    try {
+                        $adress = $this->getCity($ip);
+                        $adress = $adress['country'].$adress['area'].$adress['region'].$adress['city'];
+                    } catch (yii\base\Exception $e) {
+                        $adress = "未知";
+                    }
                 }
                 $user->created_address = $user->last_login_address = $adress;
                 $user->mobile = $data['number'];
