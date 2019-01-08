@@ -10,6 +10,7 @@ use Yii;
  * @property string $guid 全局唯一id
  * @property string $liveId 直播id
  * @property string $dataPath 视频流数据存储路径
+ * @property string $face 直播封面路径
  * @property int $generateTime 生成时间
  *
  * @property Live $live
@@ -33,7 +34,7 @@ class LiveData extends \yii\db\ActiveRecord
             [['guid', 'liveId'], 'required'],
             [['generateTime'], 'integer'],
             [['guid', 'liveId'], 'string', 'max' => 60],
-            [['dataPath'], 'string', 'max' => 100],
+            [['dataPath', 'face'], 'string', 'max' => 100],
             [['guid'], 'unique'],
             [['liveId'], 'exist', 'skipOnError' => true, 'targetClass' => Live::className(), 'targetAttribute' => ['liveId' => 'guid']],
         ];
@@ -48,6 +49,7 @@ class LiveData extends \yii\db\ActiveRecord
             'guid' => '全局唯一id',
             'liveId' => '直播id',
             'dataPath' => '视频流数据存储路径',
+            'face' => '直播封面路径',
             'generateTime' => '生成时间',
         ];
     }

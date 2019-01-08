@@ -13,7 +13,7 @@ use frontend\assets\MobileAsset;
 $asset = MobileAsset::register($this);
 ?>
 <!--关注-->
-<div id="jt-follow" class="jt-tab-item jt-display-none layui-container jt-margin-top-30">
+<div id="jt-follow" class="jt-tab-item <?php if ($current != 'follow') {echo 'jt-display-none';} ?> layui-container jt-margin-top-30">
     <div class="layui-row jt-margin-bottom-10">
         <div class="layui-col-xs6 layui-col-sm6 layui-col-md6 jt-margin-top--10">
             <div class="jt-col-md-12 jt-position-relative jt-padding-right-5">
@@ -61,7 +61,7 @@ $asset = MobileAsset::register($this);
 </div>
 
 <!--发现-->
-<div id="jt-found" class="jt-tab-item">
+<div id="jt-found" class="jt-tab-item <?php if ($current != 'found') {echo 'jt-display-none';} ?>">
     <div class="layui-row jt-margin-bottom-10">
         <div class="layui-col-xs6 layui-col-sm6 layui-col-md6 jt-margin-top--10">
             <div class="jt-col-md-12 jt-position-relative jt-padding-right-5">
@@ -131,7 +131,7 @@ $asset = MobileAsset::register($this);
 </div>
 
 <!--同行-->
-<div id="jt-peers" class="jt-tab-item jt-display-none layui-container">
+<div id="jt-peers" class="jt-tab-item <?php if ($current != 'counterparts') {echo 'jt-display-none';} ?> layui-container">
     <div class="layui-row">
         <form class="layui-form">
             <div class="layui-form-item">

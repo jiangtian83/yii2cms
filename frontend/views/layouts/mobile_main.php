@@ -69,7 +69,7 @@ use yii\helpers\Html;
                 </li>
             </ul>
         </div>
-        <div class="jt-position-absolute jt-col-md-12 jt-margin-padding-0 jt-text-align-center jt-color-white jt-font-size-24 jt-lineheight-80">
+        <div class="jt-position-absolute jt-col-md-12 jt-margin-padding-0 jt-text-align-center jt-color-white jt-font-size-24 jt-lineheight-80" style="z-index: 9999;">
             <?= $this->context->title ?>
         </div>
     </header>

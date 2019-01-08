@@ -16,6 +16,7 @@ use common\models\ExhibitionCenter;
 use common\models\ExhibitionSignUp;
 use common\models\Fans;
 use common\models\Industry;
+use common\models\LiveData;
 use common\models\Msg;
 use common\models\Products;
 use common\models\SocialInfo;
@@ -159,11 +160,40 @@ class MobileController extends Controller
      * 发现/关注/同行
      * @return string
      */
-    public function actionFound () {
-        $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><span class='jt-border-bottom-white-3 jt-padding-bottom-5'>关注</span></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur'>发现</span></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><span class='jt-border-bottom-white-3 jt-padding-bottom-5'>同行</span></li></ul>";
+    public function actionFound ($type = 'found') {
+        $current = '';
+        switch ($type) {
+            case 'follow':
+                $current = 'follow';
+                $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=follow'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur jt-font-size-24'>关注</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=found'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>发现</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=counterparts'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>同行</span></a></li></ul>";
+                $social = SocialInfo::find()
+                    ->where(['type' => 3])
+                    ->join("INNER JOIN", "t_products p", "p.id=t_socialInfo.ownerId")
+                    ->select(['guid', ''])
+                    ->all();
+
+                $social = Products::find()
+                    ->alias("p")
+                    ->join('INNER JOIN', "t_socialInfo s", "p.id=s.ownerId")
+                    ->where(['s.type' => 3])
+                    ->all();
+                $list = LiveData::find()->union([])->all();
+                break;
+            case 'found':
+                $current = 'found';
+                $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=follow'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>关注</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=found'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur jt-font-size-24'>发现</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=counterparts'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>同行</span></a></li></ul>";
+                break;
+            case 'counterparts':
+                $current = 'counterparts';
+                $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=follow'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>关注</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=found'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>发现</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=counterparts'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur jt-font-size-24'>同行</span></a></li></ul>";
+        }
+
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
-        return $this->render("found");
+        return $this->render("found", [
+            'current' => $current,
+            'list' => $list
+        ]);
     }
 
     /**
@@ -217,7 +247,7 @@ class MobileController extends Controller
             $this->showFoldIcon = false;
             $this->showBackIcon = true;
             $title = $industry->industry_name . "展";
-            $model = ExhibitionCenter::find()->where(['exhibitionId' => $exhibition->guid, 'industryId' => $id])->orderBy('created_at asc')->limit(10)->all();
+            $model = ExhibitionCenter::find()->where(['exhibitionId' => $exhibition->guid, 'industryId' => $id])->orderBy('created_at ASC')->limit(10)->all();
             if (empty($model)) {
                 return $this->redirect("/mobile/index");
             }
