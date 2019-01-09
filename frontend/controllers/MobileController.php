@@ -16,6 +16,7 @@ use common\models\ExhibitionCenter;
 use common\models\ExhibitionSignUp;
 use common\models\Fans;
 use common\models\Industry;
+use common\models\Live;
 use common\models\LiveData;
 use common\models\Msg;
 use common\models\Products;
@@ -55,6 +56,8 @@ class MobileController extends Controller
      * @var bool
      */
     public $showSetting = false;
+
+    public $titleUp = false;
 
     /**
      * 首页
@@ -162,22 +165,33 @@ class MobileController extends Controller
      */
     public function actionFound ($type = 'found') {
         $current = '';
+        $list = [];
         switch ($type) {
             case 'follow':
                 $current = 'follow';
                 $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=follow'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur jt-font-size-24'>关注</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=found'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>发现</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=counterparts'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>同行</span></a></li></ul>";
+                // 最新10条视频
                 $social = SocialInfo::find()
-                    ->where(['type' => 3])
-                    ->join("INNER JOIN", "t_products p", "p.id=t_socialInfo.ownerId")
-                    ->select(['guid', ''])
+                    ->alias("s")
+                    ->where(['s.type' => 3])
+                    ->join("INNER JOIN", "t_products p", "p.id=s.ownerId")
+                    ->join("INNER JOIN", "t_media m", "p.id=m.ownerId and source_type=1 and source_table='t_products'")
+                    ->limit(5)
+                    ->asArray()
                     ->all();
 
-                $social = Products::find()
-                    ->alias("p")
-                    ->join('INNER JOIN', "t_socialInfo s", "p.id=s.ownerId")
+                // 最新10条直播
+                $live = SocialInfo::find()
+                    ->alias("s")
                     ->where(['s.type' => 3])
+                    ->join("INNER JOIN", "t_live l", "l.guid=s.ownerId")
+                    ->join("INNER JOIN", "t_live_data d", "l.guid=d.liveId")
+                    ->limit(5)
+                    ->asArray()
                     ->all();
-                $list = LiveData::find()->union([])->all();
+
+                $list = ksort(yii\helpers\ArrayHelper::index(array_merge($social, $live), null, "created_at"));
+
                 break;
             case 'found':
                 $current = 'found';
@@ -190,6 +204,7 @@ class MobileController extends Controller
 
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
+        $this->titleUp = true;
         return $this->render("found", [
             'current' => $current,
             'list' => $list
