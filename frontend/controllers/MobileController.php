@@ -172,11 +172,10 @@ class MobileController extends Controller
                 $this->title = "<ul><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=follow'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-cur jt-font-size-24'>关注</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=found'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>发现</span></a></li><li class='jt-display-inline-block jt-col-md-3 jt-color-white jt-cursor-pointer jt-apply-tab'><a href='/mobile/found?type=counterparts'><span class='jt-border-bottom-white-3 jt-padding-bottom-5 jt-font-size-24'>同行</span></a></li></ul>";
                 // 最新10条视频
                 $social = SocialInfo::find()
-                    ->alias("s")
-                    ->select("t_products.*,t_socialInfo.*")
-                    ->where(['s.type' => 3])
-                    ->join("INNER JOIN", "t_products", "t_products.id=s.ownerId")
-                    ->join("INNER JOIN", "t_media m", "t_products.id=m.ownerId and source_type=1 and source_table='t_products'")
+                    ->select("*")
+                    ->where(['t_socialInfo.type' => 3])
+                    ->join("INNER JOIN", "t_products", "t_products.guid=t_socialInfo.ownerId")
+                    ->join("INNER JOIN", "t_media", "t_products.guid=t_media.ownerId and t_socialInfo.type=1 and t_socialInfo.source_table='t_products'")
                     ->limit(5)
                     ->asArray()
                     ->all();
@@ -191,9 +190,7 @@ class MobileController extends Controller
                     ->asArray()
                     ->all();
 
-                $list = ksort(yii\helpers\ArrayHelper::index(array_merge($social, $live), null, "created_at"));
-                var_dump($list);exit();
-
+                $list = !empty($social) && !empty($live) ? ksort(yii\helpers\ArrayHelper::index(array_merge($social, $live), null, "created_at")) : [];
                 break;
             case 'found':
                 $current = 'found';
@@ -281,7 +278,7 @@ class MobileController extends Controller
      * @return string
      */
     public function actionUploadVideo () {
-        $this->title = "上传视频";
+        $this->title = "上传产品";
         $this->showFoldIcon = false;
         $this->showBackIcon = true;
         return $this->render("uploadVideo");
@@ -714,6 +711,16 @@ class MobileController extends Controller
             } else {
                 return $this->redirect("/mobile/index");
             }
+        }
+    }
+
+    public function actionUploadApi () {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $file = $_FILES;
+        if (empty($file) || $file['error'] != UPLOAD_ERR_OK) {
+            return ['IsSuccess' => 0, 'ErrMsg' => '上传失败！错误代码：' . $file['error']];
+        } else {
+            return ['IsSuccess' => 1, 'ErrMsg' => ''];
         }
     }
 
