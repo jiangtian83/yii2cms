@@ -26,6 +26,7 @@ use yii;
 use common\Guid;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\helpers\ArrayHelper;
 
 class MobileController extends Controller
 {
@@ -274,14 +275,44 @@ class MobileController extends Controller
     }
 
     /**
-     * 上传图片/封面/视频
+     * 上传图片/视频（产品）
      * @return string
      */
     public function actionUploadVideo () {
-        $this->title = "上传产品";
-        $this->showFoldIcon = false;
-        $this->showBackIcon = true;
-        return $this->render("uploadVideo");
+        if (!Yii::$app->request->isAjax) {
+            $this->title = "上传产品";
+            $this->showFoldIcon = false;
+            $this->showBackIcon = true;
+
+            $industry = Industry::findAll(['pid' => 0]);
+            $industies = [];
+
+            foreach (ArrayHelper::toArray($industry) as $item) {
+                $item['child'] = Industry::find()->where(['pid' => $item['id']])->asArray()->all();
+                $industies[] = $item;
+            }
+
+            //return json_encode($industies);
+
+            return $this->render("uploadVideo", [
+                'industries' => $industies
+            ]);
+        } else {
+            $data = Yii::$app->request->post();
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            if (empty($data)) {
+                return ['IsSuccess' => 0, 'ErrMsg' => '提交数据为空！'];
+            } else {
+                $products = new Products();
+                $data['industryId'] = implode(",", array_values($data['industryId']));
+                $datas[$products->formName()] = $data;
+                if ($products->load($datas) && $products->save()) {
+                    return ['IsSuccess' => 1, 'ErrMsg' => ''];
+                } else {
+                    return ['IsSuccess' => 0, 'ErrMsg' => '提交数据失败！' . json_encode($products->getErrors(), JSON_UNESCAPED_UNICODE)];
+                }
+            }
+        }
     }
 
     /**
@@ -714,12 +745,20 @@ class MobileController extends Controller
         }
     }
 
+    /**
+     * @return array
+     */
     public function actionUploadApi () {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $file = $_FILES;
-        if (empty($file) || $file['error'] != UPLOAD_ERR_OK) {
+        if (empty($file) || $file['file']['error'] != UPLOAD_ERR_OK) {
             return ['IsSuccess' => 0, 'ErrMsg' => '上传失败！错误代码：' . $file['error']];
         } else {
+            $dest = Yii::$app->basePath . "/web/uploads/";
+            if (!file_exists($dest)) {
+                mkdir($dest, 0755, true);
+            }
+            if (move_uploaded_file($file['file']['tmp_name'], $dest . md5(pathinfo($file['file']['name'], PATHINFO_BASENAME) . "_" . time()) . "." . pathinfo($file['file']['name'], PATHINFO_EXTENSION)))
             return ['IsSuccess' => 1, 'ErrMsg' => ''];
         }
     }

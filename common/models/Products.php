@@ -11,12 +11,14 @@ use Yii;
  * @property string $title 产品名称
  * @property string $summary 产品简介
  * @property string $home 生产地
- * @property int $industryId 所属行业
+ * @property string $industryId 所属行业/行业标签
  * @property int $isRecommend 是否推荐
  * @property int $isPassed 是否审核通过
  * @property int $isOnSale 上下架
  * @property int $titleFontSize 字号
  * @property string $titleFontColor 字体颜色
+ * @property int $descriptionSize 简介字号
+ * @property string $descriptionColor 简介颜色
  * @property int $creator 发布人
  * @property int $editor 编辑
  * @property int $isDeleted 是否删除
@@ -40,10 +42,10 @@ class Products extends BaseModel
     {
         return [
             [['title', 'industryId'], 'required'],
-            [['industryId', 'isRecommend', 'isPassed', 'isOnSale', 'titleFontSize', 'creator', 'editor', 'isDeleted', 'created_at', 'updated_at'], 'integer'],
-            [['guid'], 'string', 'max' => 60],
+            [['isRecommend', 'isPassed', 'isOnSale', 'titleFontSize', 'descriptionSize', 'creator', 'editor', 'isDeleted', 'created_at', 'updated_at'], 'integer'],
+            [['guid', 'industryId'], 'string', 'max' => 60],
             [['title', 'summary', 'home'], 'string', 'max' => 255],
-            [['titleFontColor'], 'string', 'max' => 30],
+            [['titleFontColor', 'descriptionColor'], 'string', 'max' => 30],
             [['guid'], 'unique'],
         ];
     }
@@ -58,12 +60,14 @@ class Products extends BaseModel
             'title' => '产品名称',
             'summary' => '产品简介',
             'home' => '生产地',
-            'industryId' => '所属行业',
+            'industryId' => '所属行业/标签',
             'isRecommend' => '是否推荐',
             'isPassed' => '是否审核通过',
             'isOnSale' => '上下架',
-            'titleFontSize' => '字号',
-            'titleFontColor' => '字体颜色',
+            'titleFontSize' => '标题字号',
+            'titleFontColor' => '标题颜色',
+            'descriptionSize' => '简介字号',
+            'descriptionColor' => '简介颜色',
             'creator' => '发布人',
             'editor' => '编辑',
             'isDeleted' => '是否删除',
