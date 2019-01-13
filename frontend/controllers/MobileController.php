@@ -173,7 +173,7 @@ class MobileController extends Controller
                 // 最新10条视频
                 $social = SocialInfo::find()
                     ->alias("s")
-                    ->select("t_products.*,t_social.*")
+                    ->select("t_products.*,t_socialInfo.*")
                     ->where(['s.type' => 3])
                     ->join("INNER JOIN", "t_products", "t_products.id=s.ownerId")
                     ->join("INNER JOIN", "t_media m", "t_products.id=m.ownerId and source_type=1 and source_table='t_products'")
