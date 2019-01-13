@@ -173,9 +173,10 @@ class MobileController extends Controller
                 // 最新10条视频
                 $social = SocialInfo::find()
                     ->alias("s")
+                    ->select("t_products.*,t_social.*")
                     ->where(['s.type' => 3])
-                    ->join("INNER JOIN", "t_products p", "p.id=s.ownerId")
-                    ->join("INNER JOIN", "t_media m", "p.id=m.ownerId and source_type=1 and source_table='t_products'")
+                    ->join("INNER JOIN", "t_products", "t_products.id=s.ownerId")
+                    ->join("INNER JOIN", "t_media m", "t_products.id=m.ownerId and source_type=1 and source_table='t_products'")
                     ->limit(5)
                     ->asArray()
                     ->all();
@@ -191,6 +192,7 @@ class MobileController extends Controller
                     ->all();
 
                 $list = ksort(yii\helpers\ArrayHelper::index(array_merge($social, $live), null, "created_at"));
+                var_dump($list);exit();
 
                 break;
             case 'found':
