@@ -18,6 +18,7 @@ use common\models\Fans;
 use common\models\Industry;
 use common\models\Live;
 use common\models\LiveData;
+use common\models\Media;
 use common\models\Msg;
 use common\models\Products;
 use common\models\SocialInfo;
@@ -306,8 +307,9 @@ class MobileController extends Controller
                 $products = new Products();
                 $data['industryId'] = implode(",", array_values($data['industryId']));
                 $datas[$products->formName()] = $data;
+                //return $datas;
                 if ($products->load($datas) && $products->save()) {
-                    return ['IsSuccess' => 1, 'ErrMsg' => ''];
+                    return ['IsSuccess' => 1, 'ErrMsg' => '', 'data' => $products->guid];
                 } else {
                     return ['IsSuccess' => 0, 'ErrMsg' => '提交数据失败！' . json_encode($products->getErrors(), JSON_UNESCAPED_UNICODE)];
                 }
@@ -750,6 +752,7 @@ class MobileController extends Controller
      */
     public function actionUploadApi () {
         Yii::$app->response->format = Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
         $file = $_FILES;
         if (empty($file) || $file['file']['error'] != UPLOAD_ERR_OK) {
             return ['IsSuccess' => 0, 'ErrMsg' => '上传失败！错误代码：' . $file['error']];
@@ -758,8 +761,62 @@ class MobileController extends Controller
             if (!file_exists($dest)) {
                 mkdir($dest, 0755, true);
             }
-            if (move_uploaded_file($file['file']['tmp_name'], $dest . md5(pathinfo($file['file']['name'], PATHINFO_BASENAME) . "_" . time()) . "." . pathinfo($file['file']['name'], PATHINFO_EXTENSION)))
-            return ['IsSuccess' => 1, 'ErrMsg' => ''];
+            $filename = md5(pathinfo($file['file']['name'], PATHINFO_BASENAME) . "_" . time()) . "." . pathinfo($file['file']['name'], PATHINFO_EXTENSION);
+            if (move_uploaded_file($file['file']['tmp_name'], $dest . $filename)) {
+                $mime = $file['file']['type'];
+                $mime_image = [
+                    // images
+                    'bmp'  => 'image/x-ms-bmp',
+                    'jpg'  => 'image/jpeg',
+                    'jpeg' => 'image/jpeg',
+                    'gif'  => 'image/gif',
+                    'png'  => 'image/png',
+                    'tif'  => 'image/tiff',
+                    'tiff' => 'image/tiff',
+                    'tga'  => 'image/x-targa',
+                    'psd'  => 'image/vnd.adobe.photoshop'
+                ];
+                $mime_audio = [
+                    //audio
+                    'mp3'  => 'audio/mpeg',
+                    'mid'  => 'audio/midi',
+                    'ogg'  => 'audio/ogg',
+                    'mp4a' => 'audio/mp4',
+                    'wav'  => 'audio/wav',
+                    'wma'  => 'audio/x-ms-wma'
+                ];
+                $mime_video = [
+                    // video
+                    'avi'  => 'video/x-msvideo',
+                    'dv'  => 'video/x-dv',
+                    'mp4'  => 'video/mp4',
+                    'mpeg' => 'video/mpeg',
+                    'mpg'  => 'video/mpeg',
+                    'mov'  => 'video/quicktime',
+                    'wm'  => 'video/x-ms-wmv',
+                    'flv'  => 'video/x-flv',
+                    'mkv'  => 'video/x-matroska'
+                ];
+
+                $media = new Media();
+                if (in_array($mime, $mime_image)) {
+                    $media->type = 0;
+                } elseif (in_array($mime, $mime_video)) {
+                    $media->type = 1;
+                } else {
+                    return ['IsSuccess' => 0, 'ErrMsg' => '上传失败，格式不支持！'];
+                }
+                $media['ownerId'] = $data['guid'];
+                $media->path = "/uploads/" . $filename;
+                $media->source_table = "t_products";
+                if ($media->save()) {
+                    return ['IsSuccess' => 1, 'ErrMsg' => ''];
+                } else {
+                    return ['IsSuccess' => 0, 'ErrMsg' => '上传失败！'];
+                }
+            }
+            else
+                return ['IsSuccess' => 0, 'ErrMsg' => '上传失败！'];
         }
     }
 
@@ -786,5 +843,10 @@ class MobileController extends Controller
     public function actionTest(){
         $guid = new Guid();
         echo $guid->getGuid();
+    }
+
+    public function actionTest2(){
+        $this->layout = false;
+        return $this->render('test');
     }
 }

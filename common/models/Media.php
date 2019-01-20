@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\behaviors\GuidBehavior;
 
 /**
  * This is the model class for table "{{%media}}".
@@ -11,9 +12,19 @@ use Yii;
  * @property string $ownerId 所属id
  * @property int $type 媒体类型，0图片，1视频
  * @property string $path 媒体路径
+ * @property string $source_table 来源表
  */
 class Media extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            [
+                'class' => GuidBehavior::class
+            ]
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +39,7 @@ class Media extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['guid', 'ownerId', 'path'], 'required'],
+            [['path'], 'required'],
             [['type'], 'integer'],
             [['guid', 'ownerId', 'source_table'], 'string', 'max' => 60],
             [['path'], 'string', 'max' => 255],

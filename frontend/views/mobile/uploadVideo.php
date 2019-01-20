@@ -93,17 +93,19 @@ $asset = MobileAsset::register($this);
             <div class="layui-form-item">
                 <div class="layui-inline jt-display-block">
                     <label class="layui-form-label" style="width: 25%!important; padding-right: 0; float: left;">上传文件：</label>
-                    <div style="width: 45%; float: left; padding-left: 2%;" class="layui-form-radio-adjust">
-                        <input type="radio" name="media" lay-filter="media" value="1" title="图片" checked>
-                        <input type="radio" name="media" lay-filter="media" value="2" title="视频">
-                    </div>
-                    <button type="button" class="layui-btn jt-background-green" id="upload" style="height: 36px; width: 14%;  float: left; padding: 0">
+                    <!--<div style="width: 45%; float: left; padding-left: 2%;" class="layui-form-radio-adjust">
+                        <input type="radio" name="media" lay-filter="media" value="0" title="图片" checked>
+                        <input type="radio" name="media" lay-filter="media" value="1" title="视频">
+                    </div>-->
+                    <span style="color: indianred;line-height: 36px;font-size: 12px">（仅支持视频和图片）</span>
+                    <button type="button" class="layui-btn jt-background-green" id="upload" style="height: 36px; width: 14%;  float: left; padding: 0;">
                         <i class="layui-icon layui-icon-upload-circle"></i>
                     </button>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="jt-input-block-2">
+                    <input type="hidden" id="uploadFile" />
                     <button class="layui-btn jt-background-blue jt-col-md-12 jt-radius-5" lay-submit lay-filter="publish" id="publish">提交发布</button>
                 </div>
             </div>
@@ -143,47 +145,49 @@ $asset = MobileAsset::register($this);
         });
     });
 
-    layui.use('form', function(){
+    layui.use(['upload', 'jquery'], function(){
+        var upload = layui.upload;
         var form = layui.form;
+        var $ = layui.$;
+        var type = 1;
 
         form.on("submit(publish)", function(data){
-            console.log(data.field);
+            var uid = location.search.split("=")[1];
+            data.field.creator = data.field.editor = uid;
             $.post(
-                '/mobile/upload-video'
-                ,data.field
-                ,function(data){
-                    if (data.IsSuccess) {
-                        layer.msg("上传成功！");
+                "/mobile/upload-video",
+                data.field,
+                function(res){
+                    if (res.IsSuccess){
+                        localStorage.setItem("product", JSON.stringify({'guid':res.data,'media':data.field.media}));
+                        $("#uploadFile").trigger("click");
                     } else {
-                        layer.msg("上传失败！");
+                        layer.msg("发布失败！");
                     }
                 }
             );
-            return false;
-        })
-
-        form.render();
-    })
-
-    layui.use(['upload', 'form'], function(){
-        var upload = layui.upload;
-        var form = layui.form;
-        var type = 1;
+        });
 
         //执行实例
         var uploadInst = upload.render({
             elem: '#upload' //绑定元素
             ,url: '/mobile/upload-api/' //上传接口
-            ,accept: "images|video|audio"
-            ,exts: 'png|jpeg|jpg|gif|bmp|mp4|mp3'
+            ,accept: "images|video"
+            ,exts: 'png|jpeg|jpg|gif|bmp|mp4|avi|mpeg|mpg|mov|wm|flv|mkv'
             ,size: 10240
             ,auto: false
-            ,bindAction: "#publish"
+            ,bindAction: "#uploadFile"
+            ,data: JSON.parse(localStorage.getItem("product"))
             ,done: function(res){
                 //上传完毕回调
                 console.log(res);
                 if (res.IsSuccess) {
-                    layer.msg("上传成功！");
+                    layer.msg("发布成功！");
+                    var layerIndex = layer.confirm("发布成功，继续发布？", {title: '询问', icon: 3}, function(){
+                        layer.close(layerIndex);
+                    }, function(){
+                        window.location.href = "/mobile/index";
+                    });
                 } else {
                     layer.msg("上传失败！");
                 }

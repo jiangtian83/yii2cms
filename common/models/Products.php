@@ -3,6 +3,10 @@
 namespace common\models;
 
 use Yii;
+use common\behaviors\GuidBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%products}}".
@@ -25,8 +29,25 @@ use Yii;
  * @property string $created_at 发布时间
  * @property string $updated_at 更新时间
  */
-class Products extends BaseModel
+class Products extends ActiveRecord
 {
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            [
+                'class' => GuidBehavior::class
+            ],
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('UNIX_TIMESTAMP()')
+            ]
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
